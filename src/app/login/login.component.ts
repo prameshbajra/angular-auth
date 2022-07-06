@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthInterceptor } from '../interceptors/auth.interceptor';
 
 @Component({
     selector: 'app-login',
@@ -27,8 +28,8 @@ export class LoginComponent implements OnInit {
 
     submit(): void {
         this.http.post('http://localhost:8000/api/login', this.loginForm.getRawValue(), { withCredentials: true })
-            .subscribe(response => {
-                console.log(response);
+            .subscribe((response: any) => {
+                AuthInterceptor.accessToken = response.token;
                 this.router.navigate(['/']);
             });
     }

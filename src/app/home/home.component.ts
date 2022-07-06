@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-home',
@@ -8,15 +9,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-    message: string = 'You are not logged in';
+    message: string = '';
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private router: Router) { }
 
     ngOnInit(): void {
-        // This does not work ...
-        // Backend needs Authorization header with Bearer token ... Not only cookie ...
-        this.http.get('http://localhost:8000/api/user', { withCredentials: true }).subscribe(response => {
-            console.log(response);
+        this.http.get('http://localhost:8000/api/user', { withCredentials: true }).subscribe((response: any) => {
+            this.message = `Heyyyy ${response.name}`;
+        }, (err => {
+            this.router.navigate(['/login']);
+        }));
+    }
+
+    logout(): void {
+        this.http.post('http://localhost:8000/api/logout', {}, { withCredentials: true }).subscribe((response: any) => {
+            this.message = `You are not logged in.`;
+            this.router.navigate(['/login']);
         }, (err => {
             console.log(err);
         }));
